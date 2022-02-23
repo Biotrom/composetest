@@ -1,14 +1,30 @@
 version: "3.9"
+networks:
+  web:
+    external: true
+  internal:
+    external: false
 services:
   web:
     build: .
     ports:
       - "8000:5000"
-    volumes:
-      - .:/code
     environment:
       FLASK_ENV: development
     env_file:
       - ambiente.env
+    networks:
+      - internal
+      - web
   redis:
     image: "redis:alpine"
+  couchserver:
+    image: couchdb
+    restart: always
+    ports:
+      - "5984:5984"
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=123456789
+    networks:
+      - internal
